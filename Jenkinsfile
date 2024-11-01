@@ -6,8 +6,8 @@ pipeline {
             steps {
                 script {
                     // Step 1: Constrói os containers definidos no docker-compose.yml
-                    sh 'docker compose down -v'
-                    sh 'docker compose build'
+                    sh 'docker-compose down -v'
+                    sh 'docker-compose build'
                 }
             }
         }
@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     // Step 2: Inicia os containers
-                    sh 'docker compose up -d'
+                    sh 'docker-compose up -d'
                 }
             }
         }
