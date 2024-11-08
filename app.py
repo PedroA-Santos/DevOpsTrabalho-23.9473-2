@@ -1,4 +1,3 @@
-# Código principal do Flask (app.py)
 import time
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -7,6 +6,7 @@ from flask_appbuilder.models.sqla.interface import SQLAInterface
 from flask_appbuilder import ModelView
 from sqlalchemy.exc import OperationalError
 import logging
+from prometheus_flask_exporter import PrometheusMetrics  # Importando o PrometheusMetrics
 
 app = Flask(__name__)
 
@@ -88,6 +88,15 @@ def adicionar_aluno():
     db.session.commit()
     logger.info(f"Aluno {data['nome']} {data['sobrenome']} adicionado com sucesso!")
     return jsonify({'message': 'Aluno adicionado com sucesso!'}), 201
+
+# Configurar o Prometheus para coletar métricas da aplicação Flask
+metrics = PrometheusMetrics(app)  # Integração do Prometheus com Flask
+
+# Configurar o endpoint /metrics
+@app.route('/metrics', methods=['GET'])
+def metrics_view():
+    # As métricas serão coletadas automaticamente
+    return metrics.export()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
