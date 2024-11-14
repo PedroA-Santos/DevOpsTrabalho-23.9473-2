@@ -1,12 +1,23 @@
+# Use uma imagem base do Python 3.9
 FROM python:3.9-slim
 
+# Defina o diretório de trabalho dentro do container
 WORKDIR /app
 
+# Copie o arquivo requirements.txt para dentro do container
 COPY requirements.txt requirements.txt
+
+# Instale as dependências do Python
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install pytest  # Instala pytest para testes
 
+# Instale o pytest, caso você queira realizar testes
+RUN pip install pytest
 
+# Copie o código da aplicação para dentro do container
 COPY app.py /app/
 
+# Exponha a porta que o Flask estará escutando
+EXPOSE 5000
+
+# Comando para rodar a aplicação Flask
 CMD ["python", "app.py"]
