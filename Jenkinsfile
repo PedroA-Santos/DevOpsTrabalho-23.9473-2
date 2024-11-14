@@ -28,4 +28,12 @@ pipeline {
             sh 'docker-compose down'
         }
     }
+    stage('Logs') {
+    steps {
+        script {
+            sh 'docker-compose logs flask_app'
+        }
+    }
+}
+
 }

@@ -45,6 +45,8 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Arquivo de configuração do Prometheus
     ports:
       - "9090:9090"
+    depends_on:
+      - flask_app
     networks:
       - monitoramento
 
@@ -56,6 +58,8 @@ services:
       - "3000:3000"
     networks:
       - monitoramento
+    depends_on:
+      - prometheus
 
   # Serviço do Mysqld Exporter
   mysqld-exporter:
