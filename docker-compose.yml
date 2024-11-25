@@ -1,45 +1,51 @@
+version: "3"
 services:
-  flask_app:
+  app:
     build:
       context: .
-      dockerfile: Dockerfile_flask  # Use o nome correto do Dockerfile
+      dockerfile: Dockerfile_flask
+    container_name: app
     ports:
-      - "5000:5000"
-    depends_on:
-      - mariadb
-    networks:
-      - devops_network
-
-  mariadb:
-    image: mariadb:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: example_password
+      - "5000:5000"  # Expondo a porta do Flask
     volumes:
-      - mariadb_data:/var/lib/mysql
-    networks:
-      - devops_network
+      - ./app.py:/app/app.py
+      - ./requirements.txt:/app/requirements.txt
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      - DATABASE_URL=mysql://root:root@db:3306/maria_db  # Ajuste conforme o nome do banco de dados
+    depends_on:
+      - db
+      - prometheus
+
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile_mariadb
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # Senha para o root
+      MYSQL_DATABASE: maria_db  # Nome do banco de dados
+    ports:
+      - "3306:3306"  # Porta do MariaDB
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus
+    container_name: prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "9090:9090"
-    networks:
-      - devops_network
+      - "9090:9090"  # Porta do Prometheus
+    depends_on:
+      - db
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./grafana/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
     ports:
-      - "3000:3000"
-    networks:
-      - devops_network
+      - "3000:3000"  # Porta do Grafana
     depends_on:
       - prometheus
-
-networks:
-  devops_network:
-    driver: bridge
-
-volumes:
-  mariadb_data:
