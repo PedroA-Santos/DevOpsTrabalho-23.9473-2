@@ -2,7 +2,7 @@ services:
   flask_app:
     build:
       context: .
-      dockerfile: path/to/Dockerfile  # Adicione o caminho correto para o Dockerfile
+      dockerfile: Dockerfile_flask  # Use o nome correto do Dockerfile
     ports:
       - "5000:5000"
     depends_on:
