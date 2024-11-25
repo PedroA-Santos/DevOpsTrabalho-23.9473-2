@@ -1,0 +1,25 @@
+{
+    "dashboard": {
+      "id": null,
+      "uid": "flask-dashboard",
+      "title": "Flask Application Metrics",
+      "tags": ["flask"],
+      "timezone": "browser",
+      "schemaVersion": 27,
+      "version": 1,
+      "panels": [
+        {
+          "type": "graph",
+          "title": "Request Count",
+          "targets": [
+            {
+              "expr": "http_requests_total",
+              "legendFormat": "{{method}} {{code}}",
+              "refId": "A"
+            }
+          ]
+        }
+      ]
+    }
+  }
+  

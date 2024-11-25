@@ -1,9 +1,5 @@
-FROM mariadb:10.5
+# Imagem base do MariaDB
+FROM mariadb:latest
 
-# Definindo as variáveis de ambiente corretamente
-ENV MYSQL_ROOT_PASSWORD=root_password
-ENV MYSQL_DATABASE=school_db
-ENV MYSQL_USER=flask_user
-ENV MYSQL_PASSWORD=flask_password
-
-EXPOSE 3306
+# Configuração de inicialização (se necessário)
+COPY ./init.sql /docker-entrypoint-initdb.d/

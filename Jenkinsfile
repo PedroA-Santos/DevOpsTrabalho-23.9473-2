@@ -1,39 +1,42 @@
 pipeline {
     agent any
 
+    environment {
+        REGISTRY = "dockerhub/your-repository"
+        IMAGE_NAME = "flask_app"
+    }
+
     stages {
-        stage('Build Containers') {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/your-repository.git'
+            }
+        }
+        stage('Test') {
             steps {
                 script {
-                    // Step 1: Destrói os containers existentes e constrói novos
-                    sh 'docker-compose down -v'
-                    sh 'docker-compose build'
+                    // Run tests
+                    sh 'pytest'
                 }
             }
         }
-
-        stage('Start Application') {
+        stage('Build & Push Docker Image') {
             steps {
                 script {
-                    // Step 2: Inicia os containers
+                    // Build Docker Image
+                    sh 'docker build -t ${REGISTRY}/${IMAGE_NAME}:${GIT_COMMIT} .'
+                    // Push Docker Image to DockerHub
+                    sh 'docker push ${REGISTRY}/${IMAGE_NAME}:${GIT_COMMIT}'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    // Deploy using Docker Compose
                     sh 'docker-compose up -d'
                 }
             }
         }
     }
-
-    post {
-        always {
-            // Limpando os containers após o término da execução
-            sh 'docker-compose down'
-        }
-    }
-    stage('Logs') {
-    steps {
-        script {
-            sh 'docker-compose logs flask_app'
-        }
-    }
-}
-
 }
