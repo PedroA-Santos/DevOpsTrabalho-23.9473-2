@@ -1,42 +1,45 @@
 pipeline {
     agent any
 
-    environment {
-        REGISTRY = "dockerhub/your-repository"
-        IMAGE_NAME = "flask_app"
+    stages {
+        stage('Git Pull & Build Containers') {
+            steps {
+                script {
+                    git branch: "main", url: "https://github.com/PedroA-Santos/DevOpsTrabalho-23.9473-2.git"
+                    sh 'docker-compose down -v'
+                    sh 'docker-compose build'
+                }
+            }
+        }
+
+        stage('Start Containers & Run Tests') {
+            steps {
+                script {
+                    sh 'docker-compose up -d mariadb flask test'
+                    sh 'sleep 40' 
+
+                    try {
+                        sh 'docker-compose run --rm test'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        error "Testes falharam. Pipeline interrompido."
+                    }
+                }
+            }
+        }
+
+        stage('Keep Application Running') {
+            steps {
+                script {
+                    sh 'docker-compose up -d mariadb flask test'
+                }
+            }
+        }
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/your-repository.git'
-            }
-        }
-        stage('Test') {
-            steps {
-                script {
-                    // Run tests
-                    sh 'pytest'
-                }
-            }
-        }
-        stage('Build & Push Docker Image') {
-            steps {
-                script {
-                    // Build Docker Image
-                    sh 'docker build -t ${REGISTRY}/${IMAGE_NAME}:${GIT_COMMIT} .'
-                    // Push Docker Image to DockerHub
-                    sh 'docker push ${REGISTRY}/${IMAGE_NAME}:${GIT_COMMIT}'
-                }
-            }
-        }
-        stage('Deploy') {
-            steps {
-                script {
-                    // Deploy using Docker Compose
-                    sh 'docker-compose up -d'
-                }
-            }
+    post {
+        failure {
+            sh 'docker-compose down -v'
         }
     }
 }
