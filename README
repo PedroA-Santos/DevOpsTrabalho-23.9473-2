@@ -1,0 +1,75 @@
+Documentação do Projeto
+Autor: Pedro Antonio dos Souza
+RA: 23.9473-2
+
+Descrição
+Este projeto automatiza o provisionamento de um ambiente de monitoramento com o Grafana, configurado para exibir métricas coletadas por um servidor Prometheus. A configuração também integra o Jenkins para o gerenciamento do pipeline de execução de todo o processo.
+
+Pré-requisitos
+Jenkins deve estar instalado e funcionando corretamente.
+Docker e Docker Compose configurados no ambiente do Jenkins.
+Acesso ao navegador para visualizar o Grafana através de http://localhost:3000.
+Passos para Configurar e Rodar o Projeto
+1. Iniciar o Jenkins
+Verifique se o Jenkins está em execução. O endereço padrão para acessá-lo é http://localhost:8080.
+2. Criar um Pipeline no Jenkins
+Acessar o Jenkins
+
+Acesse o Jenkins em http://localhost:8080 e faça login.
+Tela inicial do Jenkins:alt text
+
+Criar um Novo Projeto
+
+Clique em "Novo Item".
+Nomeie o projeto como Monitoramento-Pipeline.
+Selecione a opção "Pipeline" e clique em "OK".
+Tela de criação do Pipeline:alt text
+
+Configurar o Pipeline
+
+Na página de configuração do pipeline:
+Role até a seção "Build Triggers" e marque "GitHub hook trigger for GITScm polling".
+Em Pipeline, escolha a opção Pipeline Script from SCM.
+Tela de configuração do Pipeline:alt text
+
+Configurar Repositório SCM
+
+Selecione Git em SCM.
+Insira o repositório Git: https://github.com/SeuUsuario/monitoramento-pipeline.git.
+Configure as credenciais, caso necessário.
+Clique em Salvar.
+3. Executar o Pipeline
+Retorne à página principal do Jenkins e clique no pipeline recém-criado.
+
+Clique em "Construir Agora" para iniciar o pipeline.
+
+Acompanhe a execução:
+
+Verifique os logs para confirmar que os containers Docker (Prometheus e Grafana) estão sendo inicializados corretamente.
+Certifique-se de que o serviço Grafana está em funcionamento ao final da execução.
+Tela do pipeline:alt text
+
+4. Rodar o Projeto Manualmente (Sem o Jenkins)
+Caso prefira não usar o Jenkins, você pode executar o projeto diretamente utilizando Docker Compose. Para isso, siga os passos abaixo:
+
+Acesse o diretório do projeto no terminal.
+
+Execute o seguinte comando:
+
+docker-compose up --build -d
+Após a execução, acesse as aplicações nos seguintes endereços:
+
+Aplicação Flask: http://localhost:5000
+Grafana: http://localhost:3000
+5. Acessar o Grafana
+Abra seu navegador e vá até http://localhost:3000.
+
+Faça login no Grafana:
+
+Usuário: admin
+Senha: admin (ou a senha configurada no ambiente).
+Você verá o dashboard criado automaticamente, com as métricas de requisições.
+
+Exemplo do Dashboard:alt text
+
+Nota: O carregamento dos gráficos pode levar até 30 segundos após acessar o Grafana. Também é recomendado configurar o time range do dashboard para últimos 5 minutos.
