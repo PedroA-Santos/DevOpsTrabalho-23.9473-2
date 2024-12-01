@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         REPOSITORY_URL = 'https://github.com/PedroA-Santos/DevOpsTrabalho-23.9473-2.git'
-        BRANCH_NAME = 'dev'
+        BRANCH_NAME = 'main'
     }
 
     stages {
@@ -34,6 +34,7 @@ pipeline {
             steps {
                 script {
                     // Rodar os testes com o pytest (ou qualquer outra ferramenta de testes que você esteja utilizando)
+                    sh 'sleep 40' 
                     sh 'docker compose run --rm test'
                 }
             }
